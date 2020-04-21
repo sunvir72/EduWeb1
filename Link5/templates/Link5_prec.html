@@ -1,0 +1,17 @@
+{% extends 'basepage.html' %}
+{% block content %}
+<div class="container">
+<br>
+<h2 style="color:#006666;font-family: Arial">Selected columns:</h2>
+{% for i in checks %}
+	<p style="color:#009999;font-family: Arial">{{i}}</p>
+{% endfor %}
+<h2 style="color:#006666;font-family: Arial">Select a column to perform classification:</h2>
+<form action="{% url 'classification' %}" method="post">
+{% for link in arr %}
+    {% csrf_token %}
+	<input type="Submit" name="submit" value="{{link}}"/>
+{% endfor %}
+</form>
+</div>
+{% endblock %}

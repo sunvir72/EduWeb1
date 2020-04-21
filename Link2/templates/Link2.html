@@ -1,0 +1,81 @@
+{% extends 'basepage.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+{% if user.profile.ifTeacher %}
+<div style="padding-top:24px;background-color:white"><h2><center>Courses</center></h2><hr></div>
+<div class="container">
+{% if messages %}
+  {% for message in messages %}
+  {% if message.tags == 'warning'%}
+  <div class="alert alert-warning" role="alert">
+    <center>{{ message }}</center>
+  </div>
+  {% elif message.tags == 'success'%}
+  <div class="alert alert-success" role="alert">
+    <center>{{ message }}</center>
+  </div>
+  {%endif%}
+  {% endfor %}
+{% endif %}
+<br>
+
+	{% if all_items %}
+		<table class="table table-bordered">
+	    {% for things in all_items %}
+		<tr bgcolor="white">
+	        <td><center><a style="width:300px" class="btn btn-outline-primary" href="{% url 'courseInfo' things.id %}">{{ things.item}}</a></center></td>
+			<td><center><a class="btn btn-outline-warning" href="{% url 'studlist' things.id %}">Student List</a></center></td>
+			<td><center><a class="btn btn-outline-success" href="{% url 'addstudgetid' things.id %}">Add Student</a></center></td>
+            <td><center><a class="btn btn-outline-danger" href="{% url 'delete' things.id %}">Delete</a></center></td>			
+		</tr>
+	    {% endfor %}
+		</table>
+	{% endif %}
+	<br>
+<form class="form-inline my-2 my-lg-0" action="{% url 'Link2' %}" method="POST">
+{% csrf_token %}
+<input style="width:400px" class="form-control mr-sm-2" type="search" placeholder="Add New Course" aria-label="Search" name="item" required>
+<input type="submit" value="Add Course">
+</form>	<br>
+</div>
+{% else %}
+<div style="padding-top:24px;background-color:white"><h2><center>Courses</center></h2><hr></div>
+<div class="container">
+{% if messages %}
+  {% for message in messages %}
+  {% if message.tags == 'warning'%}
+  <div class="alert alert-warning" role="alert">
+    <center>{{ message }}</center>
+  </div>
+  {% elif message.tags == 'success'%}
+  <div class="alert alert-success" role="alert">
+    <center>{{ message }}</center>
+  </div>
+  {%endif%}
+  {% endfor %}
+{% endif %}
+<br>
+
+	{% if all_items %}
+		<table class="table table-bordered">
+	    {% for things in all_items %}
+		<tr bgcolor="white">
+	        <td><center><a style="width:300px" class="btn btn-outline-primary" href="{% url 'courseRO' things.id %}">{{ things.item}}</a></center></td>
+			<td><center><a class="btn btn-outline-success" href="{% url 'crossofff' things.id %}">register</a></center></td>
+		</tr>
+	    {% endfor %}
+		</table>
+	{% endif %}
+	<br>
+</div>
+
+{% endif %}
+
+{% else %}
+<div class="container">
+    <br>
+    <h3>Login to view this page</h3>
+</div>
+{% endif %}
+
+{% endblock %}

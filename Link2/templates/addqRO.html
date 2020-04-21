@@ -1,0 +1,27 @@
+{% extends 'basepage.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+<div style="padding-top:24px;background-color:white"><h2><center>Questionnaires</center></h2><hr></div>
+<div class="container">
+{% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-warning" role="alert">
+    <center>{{ message }}</center>
+  </div>
+  {% endfor %}
+{% endif %}
+<br>
+
+<table class="table table-transparent">
+	{% for things in all_q %}
+	<tr bgcolor="white">
+	    <td><center><b>{{ things.name}}</b></center></td>
+		<td><center><p style="color:grey"><i>{{things.DT}}</i></p></center></td>
+		<td><a class="btn btn-outline-dark btn-sm" href="{% url 'qnRO' things.id cr_crseid %}">Attempt</a></td>
+	</tr>
+	{% endfor %}
+</table>
+</div>
+
+{% endif %}
+{% endblock %}

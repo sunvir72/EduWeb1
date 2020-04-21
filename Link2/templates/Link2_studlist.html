@@ -1,0 +1,89 @@
+{% extends 'basepage.html' %}
+  {% block content %}
+<div style="padding-top:24px;background-color:white"><h2><center>Student List</center></h2><hr></div><br>
+<div class="container">
+	<div id="printable">
+<table class="table table-bordered">
+			<tr bgcolor="#f2f2f2">
+			<td><center>
+			<b>STUDENTS</b>
+			</center></td>
+			<td><center>
+			<b>STATUS</b>
+			</center></td>
+			</tr>
+			{% for stud in sl %}
+			<tr id="studeleprint" data-id="{{stud.id}}" bgcolor="white">
+			<td><center>
+			{{stud.email}}
+			</center></td>
+			<td><center>
+			{% if stud.stat %}
+				<p style="color:#38F25F">registered</p>
+			{% else %}
+			    <p style="color:red">unregistered</p>
+			{% endif %}
+			</center></td>
+			</tr>
+			{% endfor %}
+		</table>
+		</div>
+		<div id="non-printable">
+  <table id="tableNP" class="table table-bordered">
+			<tr bgcolor="#f2f2f2">
+			<td><center>
+			<b>STUDENTS</b>
+			</center></td>
+			<td><center>
+			<b>STATUS</b>
+			</center></td>
+			</tr>
+			{% for stud in sl %}
+			<tr id="studele" data-id="{{stud.id}}" bgcolor="white">
+			<td><center>
+			{{stud.email}}
+			</center></td>
+			<td><center>
+			{% if stud.stat %}
+				<p style="color:#38F25F">registered</p>
+			{% else %}
+			    <p style="color:red">unregistered</p>
+			{% endif %}
+			</center></td>
+			<td><center>
+			<a class="delclass" data-id="{{stud.id}}" style="color:red;cursor:pointer">remove</a>
+			</center></td>
+			</tr>
+			{% endfor %}
+		</table>
+		</div>
+    <br>
+<script>
+//var csrfToken=$("input[name=csrfmiddlewaretoken]").val();
+
+$("#tableNP").on('click','a.delclass',function(event) {
+event.stopPropagation();
+var dataId=$(this).data('id');
+
+$.ajax({
+//url:$("#delStud").attr('action'),
+url:'/courses/deleteStud/'+ dataId +'/'+ {{sidd}},
+
+dataType:'json',
+type:'get', //get also seems to be working
+success: function(){
+$('#studele[data-id="'+ dataId +'"]').remove();
+$('#studeleprint[data-id="'+ dataId +'"]').remove();
+}
+})
+});
+</script>
+	<div id="non-printable">
+	<button class="btn btn-outline-primary" onclick="window.print()">Print List</button>
+	<a href="/courses">
+	<button class="btn btn-outline-primary" >Go Back</button></a><br><br>
+	<br><br>
+	</div>
+<br>
+</div>
+{% endblock %}

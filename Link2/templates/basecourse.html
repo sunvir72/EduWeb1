@@ -1,0 +1,121 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+  <head>
+  <link rel="shortcut icon" type="image/png" href="{% static 'img/fg.png' %}" />
+<title>EduWeb</title>
+
+  <style type="text/css">
+
+    #printable { display: none; }
+
+    @media print
+    {
+        #non-printable { display: none; }
+        #printable { display: block; }
+    }
+    </style>
+<style>
+h1,h2,h3,h4,h5,h6,p {
+  font-family:Arial;
+}
+div {
+  word-wrap: break-word;
+}
+</style>
+  <style> 
+  .top-container {
+  background-color: #FFF6E9;
+  padding: 0.1px;
+  text-align: center;
+}
+
+  
+input[type=submit] {
+  background-color: #376DF3;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+div.h {
+  width: 70px;
+  overflow: hidden;
+  -webkit-transition: width 0.4s;
+  transition: width 0.4s;
+  border-right:2px solid grey;
+  border-top:1px solid #E6E6E6;
+  border-bottom:1px solid #E6E6E6;
+  border-radius:7px;
+ 
+}
+div.h:hover {
+  width: 208px;
+  -webkit-transition: width 0.3s;
+  transition: width 0.3s;
+  
+}
+.btn-light:hover {
+  font-weight: bold;  
+}
+</style>
+<script src="https://kit.fontawesome.com/58ba01a270.js" crossorigin="anonymous"></script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <title>Courses</title>
+  </head>
+  <style>
+  body  {
+  background-color:#FAFAFA;
+}
+  </style>
+  <body >
+{% if user.is_authenticated and user.profile.ifTeacher %}
+<nav style="background-color:#333D4B;box-shadow: 0 0 10px grey" class="navbar navbar-expand-lg navbar-dark ">
+
+  <a style="width: 10%; text-align: center;" class="navbar-brand" href="/"><img src="{% static "img/gr_t.png" %}" width="163" height="35" align="middle"></a>
+  <a style="width: 31.5%" class="navbar-brand" > </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      <a class="nav-item nav-link" href="/courses">&nbsp;&nbsp;Courses&nbsp;&nbsp;</a>
+	  <a class="nav-item nav-link" href="/ml"> &nbsp;&nbsp;ML portal&nbsp;&nbsp;</a>
+    </div>
+  </div>
+  <form class="form-inline my-2 my-lg-0">
+      <a class="nav-item nav-link" style="color:#D5F2F7" >Welcome &nbsp;<strong>{{user.first_name}}</strong></a>
+	  <a style="color:white;color:#F1F1F1;font-size: 14px" class="btn btn-outline-success" href="{% url 'log_out' %}">&nbsp;&nbsp;&nbsp;Logout &nbsp;&nbsp;&nbsp;</a>
+    </form>
+</nav>
+{% endif %}
+
+<!-- hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh -->
+  <script>
+ if ('scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual'
+}
+</script>
+
+{% block content %}
+{% endblock %}
+<br>
+<script>
+function setScrollPos() {
+localStorage.setItem('pos',  window.pageYOffset);}
+</script>
+<script>
+var x=localStorage.getItem('pos');
+window.scrollTo(0, x);
+</script>
+</body>
+</html>

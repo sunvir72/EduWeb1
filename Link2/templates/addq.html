@@ -1,0 +1,68 @@
+{% extends 'basepage.html' %}
+{% block content %}
+{% if user.is_authenticated and user.profile.ifTeacher %}
+<div style="padding-top:24px;background-color:white"><h2><center>Questionnaires</center></h2><hr></div>
+<div class="container">
+<br><h4> Add Questionnaire</h4><br>
+
+<form action="{% url 'quesr' cid %}" method="POST">
+	{% csrf_token %}
+<div class="row">
+<div style="padding-top:4px" class="col">
+<h6>Name</h6>
+	<input style="width:330px" class="form-control" type="search" placeholder="Name" name="item" required>
+</div>
+<div class="col">
+<h6>Select Questionnaire type</h6>
+<div class="form-row align-items-center"><div class="col-auto my-1">
+      <select id="selectBox" onchange="changeFunc()" class="custom-select mr-sm-2" style="width:200px" name = "type" required>
+ 	  <option value="Test">Test</option>
+	  <option value="Practice" selected>Practice</option>
+      </select>
+    </div></div>
+</div>
+
+<div style="padding-top:4px" class="col" >
+<h6 style="color:grey" id="tl">Time limit</h6>
+<input class="form-control" style="display:inline-block;width: 100px" type="number" min="0" max="24" name="hrs" id="hrs" placeholder="Hours" disabled required>
+<input class="form-control" style="display:inline-block;width: 100px" type="number" min="1" max="60" name="min" id="min" placeholder="Minutes" disabled required>
+</div>
+<div style="padding-top:24px" class="col" ><input type="submit" value="Add "></div>
+</div>
+
+
+</form><br>
+<a class="btn btn-outline-secondary btn-sm" href="{% url 'courseInfo' cid %}"><- Go back</a>
+<br>
+<hr>
+<br>
+<table class="table table-transparent">
+	{% for things in all_q %}
+	<tr bgcolor="white">
+	    <td style="align:left"><a class="btn btn-dark" href="{% url 'qn' things.id cid%}">{{ things.name}}</a></td>
+		<td style="align:left"><p style="color:#FFC100">{{things.qtype}}</p></td>
+		<td><a class="btn btn-outline-dark btn-sm" href="{% url 'qnr_attempts' things.id cid %}">Attempts</a></td>
+		<td><center><p style="color:">Time limit: {{things.time}}</p></center></td>
+		<td><center><p style="color:grey"><i>{{things.DT}}</i></p></center></td>
+		<td><center><a class="btn btn-outline-danger btn-sm" href="{% url 'delquesr' things.id cid %}">Delete</a></center></td>
+	</tr>
+	{% endfor %}
+</table><br><br>
+</div>
+<script>
+function changeFunc(){
+var selectBox = document.getElementById("selectBox");
+var val = selectBox.options[selectBox.selectedIndex].value;
+if(val=='Test'){
+document.getElementById('hrs').disabled = false; document.getElementById('min').disabled = false;
+document.getElementById('tl').style.color = "black";
+}
+else{
+document.getElementById('hrs').disabled = true; document.getElementById('min').disabled = true;
+document.getElementById('tl').style.color = "grey";
+}
+}
+</script>
+{% endif %}
+
+{% endblock %}

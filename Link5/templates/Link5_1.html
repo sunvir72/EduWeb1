@@ -1,0 +1,44 @@
+{% extends 'basepage.html' %}
+{% block content %}
+<div style="background-color:white"><br><h2><center>Results of classification</center></h2><hr></div><br>
+<div class="container">
+<br>
+<!--
+<table class="table table-bordered">
+	<tr>
+	<td style="padding-left:">True Positive </td>
+	<td style="padding-left:">True Negative </td>
+	<td style="padding-left:">False Positive </td>
+	<td style="padding-left:">False Negative </td>
+	<td style="padding-left:">Accuracy </td>
+	<td style="padding-left:">Precision </td>
+	<td style="padding-left:">Recall </td>
+	<td style="padding-left:">F1 score </td>
+	</tr>
+	
+	<tr>
+	<td style="padding-left:">{{tp}} </td>
+	<td style="padding-left:">{{tn}} </td>
+	<td style="padding-left:">{{fp}} </td>
+	<td style="padding-left:">{{fn}} </td>
+	<td style="padding-left:">{{accuracy}} </td>
+	<td style="padding-left:">{{precision}} </td>
+	<td style="padding-left:">{{recall}} </td>
+	<td style="padding-left:">{{f1}} </td>
+	</tr>
+	</table>
+-->
+<center>
+<table style="width:70%" class="table table-bordered">
+	<tr><td style="background-color:#EFEFEF;border-bottom: 1px solid #CACACA;">True Positive </td><td style="background-color:white;padding-left:35px">{{tp}} </td></tr>
+	<tr><td style="background-color:#EFEFEF;border-bottom: 1px solid #CACACA;">True Negative </td><td style="background-color:white;padding-left:35px">{{tn}} </td></tr>
+	<tr><td style="background-color:#EFEFEF;border-bottom: 1px solid #CACACA;">False Positive </td><td style="background-color:white;padding-left:35px">{{fp}} </td></tr>
+	<tr><td style="background-color:#EFEFEF;border-bottom: 1px solid #CACACA;">False Negative </td><td style="background-color:white;padding-left:35px">{{fn}} </td></tr>
+	<tr><td style="background-color:#EFEFEF;border-bottom: 1px solid #CACACA;">Accuracy </td><td style="background-color:white;padding-left:35px">{{accuracy}} </td></tr>
+	<tr><td style="background-color:#EFEFEF;border-bottom: 1px solid #CACACA;">Precision </td><td style="background-color:white;padding-left:35px">{{precision}} </td></tr>
+	<tr><td style="background-color:#EFEFEF;border-bottom: 1px solid #CACACA;">Recall </td><td style="background-color:white;padding-left:35px">{{recall}} </td></tr>
+	<tr><td style="background-color:#EFEFEF">F1 score </td><td style="background-color:white;padding-left:35px">{{f1}} </td></tr>	
+</table>
+</center>
+</div>
+{% endblock %}

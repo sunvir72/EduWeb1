@@ -1,0 +1,214 @@
+{% extends 'basepage.html' %}
+{% block content %}
+{% if user.is_authenticated and user.profile.ifTeacher %}
+<div style="padding-top:24px;background-color:white"><h2><center>Questionnaire: {{curr_q.name}}</center></h2><hr></div><br>
+
+	<!-- The Modal -->
+  <div class="modal fade" id="bulk">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Bulk Upload</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <!-- Modal body -->
+        <div class="modal-body">
+<h4>Please note that the file must meet the following requirements:</h4>
+<li>The file must be a csv file</li>
+<li>Maximum 300 questions allowed per upload</li>
+<li>There must be <b>exactly 12</b> columns: 1 question, 6 options(2 are mandatory, rest can be left blank), 1 correct option, Points for correct answer, Negative Marks, Topic(<b>must already be added in this course, and is case sensitive</b>), Level(1=easy, 2=medium, 3=hard)</li>
+<li>Following is a small sample file: (All columns must be in <b>same order</b> as in the sample file, although names of headings(1st row) can be different)</li><br>
+<table class="table table-bordered">
+<tr>
+<td>Question</td>
+<td>option a</td>
+<td>option b</td>
+<td>option c</td>
+<td>option d</td>
+<td>option e</td>
+<td>option f</td>
+<td>Correct</td>
+<td>Points</td>
+<td>Negative</td>
+<td>Topic</td>
+<td>Level</td>
+</tr>
+<tr>
+<td>question no.1</td>
+<td>op1-a</td>
+<td>op1-b</td>
+<td>op1-c</td>
+<td>op1-d</td>
+<td></td>
+<td></td>
+<td>b</td>
+<td>4</td>
+<td>1</td>
+<td>topic1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>question no.2</td>
+<td>op2-a</td>
+<td>op2-b</td>
+<td>op2-c</td>
+<td>op2-d</td>
+<td>op2-e</td>
+<td>op2-f</td>
+<td>a,b</td>
+<td>4</td>
+<td>0</td>
+<td>topic2</td>
+<td>1</td>
+</tr>
+<tr>
+<td>question no.3</td>
+<td>op3-a</td>
+<td>op3-b</td>
+<td>op3-c</td>
+<td>op3-d</td>
+<td>op3-e</td>
+<td></td>
+<td>c</td>
+<td>6</td>
+<td>2</td>
+<td>topic1</td>
+<td>3</td>
+</tr>
+</table>
+<br>
+<center><form onsubmit="func1()" method="post" action="{% url 'bulkqn' pk1 cid %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="file" accept=".csv" required>
+    <button id="uploading" class="btn btn-primary" type="submit" >Upload File</button>
+</form></center>
+<script>
+function func1(){
+document.getElementById("uploading").innerHTML = "<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>&nbsp;&nbsp; Uploading questions";
+}
+</script>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="container">
+{% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-warning" role="alert">
+    <center>{{ message }}</center>
+  </div>
+  {% endfor %}
+{% endif %}
+
+<button class="btn btn-outline-dark btn-block" data-toggle="modal" data-target="#bulk">Bulk Upload</button><br>
+<h4>Add New Question:</h4>
+<form  action="{% url 'qn' pk1 cid %}" method="POST">
+	{% csrf_token %}
+	<textarea class="form-control" rows="5" cols="146" id="Enter Question" name="item" required></textarea><br>
+	
+<table class="table table-borderless">
+	<tr>
+	<td><input class="form-control mr-sm-2" type="search" placeholder="Option (a)" name="op1" required></td>
+	<td><input class="form-control mr-sm-2" type="search" placeholder="Option (b)" name="op2" required></td>
+	<td><input class="form-control mr-sm-2" type="search" placeholder="Option (c)" name="op3" ></td>		
+	</tr>
+	<tr>
+	<td><input class="form-control mr-sm-2" type="search" placeholder="Option (d)" name="op4" ></td>
+	<td><input class="form-control mr-sm-2" type="search" placeholder="Option (e)" name="op5" ></td>
+	<td><input class="form-control mr-sm-2" type="search" placeholder="Option (f)" name="op6" ></td>
+	</tr>
+	
+	<tr>
+	<td style="alight:left"><div style="padding-bottom:7px">Points</div><input class="form-control" style="width: 200px" type="number" min="1" max="100" step=".5" name="marks" value=1 required></td>
+	<td><div style="padding-bottom:7px">Negative marks</div><input class="form-control" style="width: 200px" type="number" min="0" max="100" step=".5" name="neg" value=0 required></td>
+	<td style="alight:left">
+	<div class="form-row align-items-center"><div class="col-auto my-1">
+      <label class="mr-sm-2">Level</label>
+      <select class="custom-select mr-sm-2" name = "level" required>
+ 	  <option value="1">Easy</option>
+	  <option value="2">Medium</option>
+	  <option value="3">Difficult</option>
+      </select>
+    </div></div>
+	</td>
+	</tr>
+
+	<tr>
+	<td><div class="form-row align-items-center"><div class="col-auto my-1">
+      <label class="mr-sm-2">Select the correct Option(s)</label><br>
+      <select style="width:150px" multiple="multiple" class="custom-select mr-sm-2" name = "correct[]" required>
+      <!--<option value="">None</option>-->
+ 	  <option value="a">a</option>
+	  <option value="b">b</option>
+	  <option value="c">c</option>
+      <option value="d">d</option>
+      <option value="e">e</option>
+      <option value="f">f</option>
+      </select>
+    </div></div></td>
+
+	<td style="alight:left">
+	<div class="form-row align-items-center"><div class="col-auto my-1">
+      <label class="mr-sm-2">Topic</label>
+      <select class="custom-select mr-sm-2" name="topic_" required>
+	  {% for i in topics %}
+ 	  <option value="{{i}}">{{i}}</option>
+	  {% endfor %}
+      </select>
+    </div></div>
+	</td>
+
+	
+	</tr>
+	</table>
+
+	<input type="submit" value="Add Question">
+</form>
+<table class="table table-transparent" style="background-color:white">
+	{% for things in all_q %}
+	<tr><td>
+	<h2>Q{{forloop.counter}}) {{things.ques|linebreaksbr}}</h2>
+	<h5>
+	{% if things.opt1 %}<li>a) {{things.opt1}}</li>{% endif %}
+	{% if things.opt2 %}<li>b) {{things.opt2}}</li>{% endif %}
+	{% if things.opt3 %}<li>c) {{things.opt3}}</li>{% endif %}
+	{% if things.opt4 %}<li>d) {{things.opt4}}</li>{% endif %}
+	{% if things.opt5 %}<li>e) {{things.opt5}}</li>{% endif %}
+	{% if things.opt6 %}<li>f) {{things.opt6}}</li>{% endif %}
+	<br>
+	<p style="color:#FFB100;display:inline-block">CORRECT: <b>{{things.correct}} </b> </p> |
+	<p style="color:#0CBD00;display:inline-block">POINTS: <b>{{things.marks}}</b> </p> |
+	<p style="color:red;display:inline-block">NEGATIVE MARKS: <b>{{things.neg}}</b> </p> |
+	{% if things.level == 1 %}
+	<p style="color:grey;display:inline-block"> LEVEL: <b>easy</b> </p> |
+	{% elif things.level == 2 %}
+	<p style="color:grey;display:inline-block"> LEVEL: <b>medium</b> </p> |
+	{% else %}
+	<p style="color:grey;display:inline-block"> LEVEL: <b>hard</b> </p> |
+	{% endif %}
+	<p style="color:grey;display:inline-block"> TOPIC:<b>{{things.topic}}</b> </p>
+	</td>
+	<td><h5><a class="btn btn-outline-danger" href="{% url 'delqn' things.id pk1 cid %}">Delete</a></h5>
+	</h5></td></tr>
+	{% endfor %}
+</table>
+</div>
+<script>
+$('option').mousedown(function(e) {
+    e.preventDefault();
+    var originalScrollTop = $(this).parent().scrollTop();
+    console.log(originalScrollTop);
+    $(this).prop('selected', $(this).prop('selected') ? false : true);
+    var self = this;
+    $(this).parent().focus();
+    setTimeout(function() {
+        $(self).parent().scrollTop(originalScrollTop);
+    }, 0);
+    
+    return false;
+});
+</script>
+{% endif %}
+
+{% endblock %}

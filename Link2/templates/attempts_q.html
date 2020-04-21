@@ -1,0 +1,39 @@
+{% extends 'basepage.html' %}
+  {% block content %}
+<div style="background-color:white"><br><h2><center>Answer sheet of <b>{{name}}</b> for <b>{{qnr}}</b></center></h2><hr></div><br>
+<div class="container">
+
+
+	<center><h4></h4></center>
+	<table class="table table-bordered">
+			<tr bgcolor="#f2f2f2">
+			<td></td>
+			<td><center>
+			<b>Question</b>
+			</center></td>
+			<td><center>
+			<b>Answer</b>
+			</center></td>
+			</tr>
+			{% for at in q_attempts %}
+			<tr bgcolor="white">
+			<td>
+			Q{{forloop.counter}}</td>
+			<td>{{at.ques.ques}}
+			</td>
+			<td>
+			
+			{% if at.stat == 1 %}
+			<p style="color:#0CBD00">correct</p>
+			{% elif at.stat == 2 %}
+			<p style="color:red">wrong</p>
+			{% else %}
+			<p style="color:grey">NA</p>
+			{% endif %}
+			</td>
+			</tr>
+			{% endfor %}
+		</table>
+		<br>
+</div>
+{% endblock %}

@@ -1,0 +1,473 @@
+{% extends 'basecourse.html' %}
+{% block content %}
+
+  	<!-- The Modal -->
+  <div class="modal fade" id="descedit">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Description</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <!-- Modal body -->
+        <div class="modal-body">
+    <form action="{% url 'editdesc' cid %}" method="POST">
+	  {% csrf_token %}
+      <textarea name="new" rows="7" cols="100" required>{{course.desc}}</textarea><br>
+	  <input type="submit" value="Update">
+    </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+    <div class="modal fade" id="editname">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+      
+        <div class="modal-header">
+          <h4 class="modal-title">Edit Course Name</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+    <form action="{% url 'edit' cid %}" class="form-inline my-2 my-lg-0" method="POST">
+	  {% csrf_token %}
+      <input style="width:400px" class="form-control mr-sm-2" type="search" placeholder="{{course.item}}" value="{{course.item}}" name="item">
+	  <input type="submit" value="Update">
+    </form>
+        </div>
+      </div>
+    </div>
+  </div>
+<!------------------------------------------------------------------------------------------------------------------------->
+<div style="font-family:verdana;padding-top:24px;background-color:white"><h2><center>{{course.item}} <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editname">Edit</button></center></h2><hr></div><br>
+<div class="container">
+
+<div style="border-radius: 6px;box-shadow: 0 0 10px #D8D8D8;padding: 25px;background-color:white">
+
+<div id="desc">
+<center><form style="display: inline-block" action="{% url 'updatecred' cid %}" method="POST">
+	{% csrf_token %}
+	<input class="form-control" style="height:43px;padding: 8px;width: 120px;display:inline-block" type="number" min="1" max="25" step=".5" name="Credits" placeholder="New Credits" required>
+    <input type="submit" value="Update Credits">
+</form><br>
+
+	<h3 style="display:inline-block;color:green;border: 1px solid green;padding: 7px;width: 200px;border-radius: 5px;"><center>Credits: {{course.cred}}</center></h3></center>
+	<br>
+	<h5><strong>Course Description</strong>:<br><br> {{course.desc|linebreaks}}</h5><br>
+	<button class="btn btn-primary"  style="width:200px" data-toggle="modal" data-target="#descedit">Edit Description</button>
+</div>
+<!------------------------------------------------------------------------------------------------------------------------->
+	<!-- The Modal -->
+  <div class="modal fade" id="syllabus">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Syllabus</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+    <form id="editSyll" action="{% url 'editsyll' cid %}"  method="POST">
+	  {% csrf_token %}
+      <textarea name="new" rows="7" cols="100" required>{{course.syllabus}}</textarea><br>
+	  <input type="submit" value="Update">
+    </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div id="syll" style="display:none">
+<h5><strong>Syllabus</strong>:<br><br> <div id="actualSyll" style="white-space: pre-line;">{{course.syllabus}}</div></h5><br>
+<button class="btn btn-primary" style="width:200px" data-toggle="modal" data-target="#syllabus">Edit Syllabus</button>
+</div>
+
+<script>
+$("#editSyll").submit(function(e) {
+e.preventDefault();
+var serializedData=$("#editSyll").serialize();
+$.ajax({
+url:$("#editSyll").attr('action'),
+data:serializedData,
+type:'post',
+success: function(response){
+$("#actualSyll").html(response.neww.syllabus);
+}
+})
+});
+</script>
+
+<!------------------------------------------------------------------------------------------------------------------------->
+<div id="topics" style="display:none">
+	<form id="addTopic" class="form-inline my-2 my-lg-0" action="{% url 'addTopic' cid %}" method="POST">
+	  {% csrf_token %}
+	  <input style="width: 480px" class="form-control mr-sm-2" type="search" placeholder="Add New Topic" name="topic" required>
+	  <input type="submit" value="Add Topic">
+    </form>
+	<br>
+	<h4>Course Topics:</h4>
+  <table id="topicsTable" class="table table-transparent">
+  {% for it in topics %}
+  <tr id="topicele" data-id="{{it.id}}">
+  <td>{{it.name}}</td>
+  <td><a class="delclass" data-id="{{it.id}}" style="color:red;cursor:pointer">Delete</a></td>
+  </tr>
+  {% endfor %}
+  </table>
+
+</div>
+<script>
+$("#addTopic").submit(function(e) {
+e.preventDefault();
+var serializedData=$("#addTopic").serialize();
+$.ajax({
+url:$("#addTopic").attr('action'),
+data:serializedData,
+type:'post',
+success: function(response){
+$("#topicsTable").append(
+'<tr id="topicele" data-id="'+ response.neww.id +'" > <td>'+ response.neww.name +'</td> <td><a class="delclass" data-id="'+ response.neww.id +'" style="color:red;cursor:pointer" >Delete</a></td> </tr>'
+)
+}
+})
+$("#addTopic")[0].reset();
+});
+</script>
+<script>
+var csrfToken=$("input[name=csrfmiddlewaretoken]").val();
+
+$("#topicsTable").on('click','a.delclass',function(event) {
+event.stopPropagation();
+var dataId=$(this).data('id');
+
+$.ajax({
+url:'/courses/delTopic/'+ dataId ,
+data:{
+csrfmiddlewaretoken:csrfToken,
+tid:dataId  // removing this also seems to be working
+},
+type:'post', //get also seems to be working
+success: function(){
+$('#topicele[data-id="'+ dataId +'"]').remove();
+}
+})
+});
+</script>
+<!------------------------------------------------------------------------------------------------------------------------->
+<div id="link" style="display:none">
+	<form id="addLink" class="form-inline my-2 my-lg-0" action="{% url 'addLink' cid %}" method="POST">
+	  {% csrf_token %}
+	  <div class="row">
+	  <div style="padding-top:3px" class="col"><input style="width: 480px" class="form-control mr-sm-2" type="search" placeholder="Add New Link" name="Link" required></div>
+	  <div style="padding-top:6px" class="col">Topic</div>
+	  <div class="col"><div class="form-row align-items-center"><div class="col-auto my-1">
+      <select class="custom-select mr-sm-2" name="topic_" required>
+	  {% for i in topics %}
+ 	  <option value="{{i}}">{{i}}</option>
+	  {% endfor %}
+      </select>
+    </div></div>
+	  </div>
+	  <div class="col"><input type="submit" value="Add Link"></div>
+	  </div>
+	  
+    </form>
+	<br>
+	
+	<h4>Reference Links:</h4>
+  <table id="linkTable" class="table table-transparent">
+  <tr bgcolor="#f2f2f2"><td><b>Link</b></td><td><b>Topic</b></td><td></td></tr>  
+  {% for it in l %}
+  <tr id="linkele" data-id="{{it.id}}">
+  <td><a href="{{it}}" target="_blank">{{it}}</a></td>
+  <td>{{it.topic}}</td>
+  <td><a class="delclass" data-id="{{it.id}}" style="color:red;cursor:pointer">Delete</a></td>
+  </tr>
+  {% endfor %}
+  </table>
+</div>
+<script>
+$("#addLink").submit(function(e) {
+e.preventDefault();
+var serializedData=$("#addLink").serialize();
+$.ajax({
+url:$("#addLink").attr('action'),
+data:serializedData,
+type:'post',
+success: function(response){
+$("#linkTable").append(
+'<tr id="linkele" data-id="'+ response.neww.id +'" > <td><a href="'+ response.neww.link +'" target="_blank"> '+ response.neww.link +'</a></td>  <td>'+ response.neww.topic +'</td> <td><a class="delclass" data-id="'+ response.neww.id +'" style="color:red;cursor:pointer" >Delete</a></td> </tr>'
+)
+}
+})
+$("#addLink")[0].reset();
+});
+
+var csrfToken=$("input[name=csrfmiddlewaretoken]").val();
+
+$("#linkTable").on('click','a.delclass',function(event) {
+event.stopPropagation();
+var dataId=$(this).data('id');
+
+$.ajax({
+url:'/courses/delLink/'+ dataId ,
+data:{
+csrfmiddlewaretoken:csrfToken,
+linkid:dataId  // removing this also seems to be working
+},
+type:'post', //get also seems to be working
+//dataType:'json',  //removing this also seems to be working
+success: function(){
+$('#linkele[data-id="'+ dataId +'"]').remove();
+}
+})
+});
+</script>
+<!------------------------------------------------------------------------------------------------------------------------->
+<div id="inst" style="display:none">
+	<form class="form-inline my-2 my-lg-0" id="addInst" data-url="{% url 'addInst' cid %}" method="POST">
+	  {% csrf_token %}
+	  <input class="form-control mr-sm-2" type="search" placeholder="Add New Instructor" name="Instructor" required>
+	  <input type="submit" value="Add Instructor">
+    </form>
+	
+	<br>
+	<h4>Course Instructors:</h4>
+  <table id="instTable" class="table table-transparent">
+  {% for it in i %}
+  <tr id="instele" data-id="{{it.id}}">
+  <td>{{it}}</td>
+  <td><a class="delclass" data-id="{{it.id}}" style="color:red;cursor:pointer">Delete</a></td>
+  </tr>
+  {% endfor %}
+  </table>
+</div>
+<script>
+$("#addInst").submit(function(e) {
+e.preventDefault();
+var serializedData=$("#addInst").serialize();
+$.ajax({
+url:$("#addInst").data('url'),
+data:serializedData,
+type:'post',
+success: function(response){
+$("#instTable").append(
+'<tr id="instele" data-id="'+ response.neww.id +'" > <td>'+ response.neww.inst +'</td> <td><a class="delclass" data-id="'+ response.neww.id +'" style="color:red;cursor:pointer" >Delete</a></td> </tr>'
+)
+}
+})
+$("#addInst")[0].reset();
+});
+</script>
+<script>
+var csrfToken=$("input[name=csrfmiddlewaretoken]").val();
+
+$("#instTable").on('click','a.delclass',function(event) {
+event.stopPropagation();
+var dataId=$(this).data('id');
+
+$.ajax({
+url:'/courses/delInst/'+ dataId ,
+data:{
+csrfmiddlewaretoken:csrfToken,
+instid:dataId  // removing this also seems to be working
+},
+type:'post', //get also seems to be working
+//dataType:'json',  //removing this also seems to be working
+success: function(){
+$('#instele[data-id="'+ dataId +'"]').remove();
+}
+})
+});
+</script>
+
+<!------------------------------------------------------------------------------------------------------------------------->
+<div id="ann" style="display:none">
+	<form id="addAnnc" action="{% url 'addannc' cid %}" method="POST">
+	  {% csrf_token %}
+	  <textarea placeholder="Add New Announcemnet" name="Announcement" rows="7" cols="140" required></textarea><br>
+	  <input type="submit" value="Add Announcemnet">
+    </form>
+	<br>
+	<h4>Announcements:</h4>
+  <table id="annTable" class="table table-transparent">
+  {% for it in ann %}
+  <tr id="annele" data-id="{{it.id}}">
+  <td><b>{{forloop.counter}})</b> {{it|linebreaksbr}}</td>
+  <td><a class="delclass" data-id="{{it.id}}" style="color:red;cursor:pointer">Delete</a></td>
+  </tr>
+  {% endfor %}
+  </table>
+</div>
+<script>
+$("#addAnnc").submit(function(e) {
+e.preventDefault();
+var serializedData=$("#addAnnc").serialize();
+$.ajax({
+url:$("#addAnnc").attr('action'),
+data:serializedData,
+type:'post',
+success: function(response){
+$("#annTable").append(
+'<tr id="annele" data-id="'+ response.neww.id +'" > <td><b>'+response.size+') </b>'+ response.neww.annc +'</td> <td><a class="delclass" data-id="'+ response.neww.id +'" style="color:red;cursor:pointer" >Delete</a></td> </tr>'
+)
+}
+})
+$("#addAnnc")[0].reset();
+});
+
+var csrfToken=$("input[name=csrfmiddlewaretoken]").val();
+
+$("#annTable").on('click','a.delclass',function(event) {
+event.stopPropagation();
+var dataId=$(this).data('id');
+
+$.ajax({
+url:'/courses/delannc/'+ dataId ,
+data:{
+csrfmiddlewaretoken:csrfToken,
+anncid:dataId  // removing this also seems to be working
+},
+type:'post', //get also seems to be working
+//dataType:'json',  //removing this also seems to be working
+success: function(){
+$('#annele[data-id="'+ dataId +'"]').remove();
+}
+})
+});
+</script>
+<!------------------------------------------------------------------------------------------------------------------------->
+<div id="ass" style="display:none">
+	<form id="addAss" class="form-inline my-2 my-lg-0" method="post" action="{% url 'addassign' cid %}" enctype="multipart/form-data">
+    {% csrf_token %}
+	<table class="table table-borderless">
+	<tr>
+	<td><input style="width: 300px" class="form-control mr-sm-2" type="search" placeholder="Assignment name" name="name" required></td>
+    <td><input type="file" name="file" required></td></tr>
+	<tr>
+	<td>topic<div class="form-row align-items-center"><div class="col-auto my-1">
+      <select class="custom-select mr-sm-2" name="topic_" required>
+	  {% for i in topics %}
+ 	  <option value="{{i}}">{{i}}</option>
+	  {% endfor %}
+      </select>
+    </div></div>
+	  </td>
+    <td style="padding-top:18px"><input type="submit" value="Upload"></td></tr>
+	</table>
+</form>
+<hr>
+<br>
+<h4>Assignments:</h4>
+  <table id="assTable" class="table table-transparent">
+  <tr bgcolor="#f2f2f2"><td><center><b>Name</b></center></td><td><center><b>Topic</b></center></td><td></td><td></td></tr>
+  {% for i in ass %}
+  <tr id="assele" data-id="{{i.id}}">
+  <td><center>{{i.name}}</center></td>
+  <td><center>{{i.topic}}</center></td>
+  <td><center><a href="{{i.assign.url}}" target="_blank">Download</a></center></td>
+  <td><center><a style="color:red;cursor:pointer" class="delclass" data-id="{{i.id}}">Delete</a></center></td>
+  </tr>
+  {% endfor %}
+  </table>
+</div>
+
+<script>
+$("#addAss").submit(function(e) {
+e.preventDefault();
+//var serializedData=$("#addAss").serialize();
+$.ajax({
+url:$("#addAss").attr('action'),
+data:new FormData(this),
+type:'post',
+contentType: false, 
+processData: false,
+dataType: 'json',
+success: function(response){
+$("#assTable").append(
+'<tr id="assele" data-id="'+ response.fileid +'" > <td><center>'+ response.name +'</center></td><td><center>'+ response.topic +'</center></td> <td><center><a href="'+response.fileurl+'" target="_blank">Download</a></center></td> <td><center><a class="delclass" data-id="'+ response.fileid +'" style="color:red;cursor:pointer" >Delete</a></center></td> </tr>'
+);
+
+}
+})
+
+});
+
+var csrfToken=$("input[name=csrfmiddlewaretoken]").val();
+
+$("#assTable").on('click','a.delclass',function(event) {
+event.stopPropagation(); //can we remove this?
+var dataId=$(this).data('id');
+//alert('inside');
+$.ajax({
+url:'/courses/delassign/'+ dataId ,
+data:{
+csrfmiddlewaretoken:csrfToken,
+//assid:dataId  // removing this also seems to be working
+},
+type:'post', //get also seems to be working
+dataType:'json',  //removing this also seems to be working
+success: function(){
+$('#assele[data-id="'+ dataId +'"]').remove();
+}
+})
+});
+</script>
+<!------------------------------------------------------------------------------------------------------------------------->
+
+</div>
+</div>
+<div class="h" style="position:fixed;top:auto; top:220px;left:0px;">
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('desc')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-chevron-right"></i>
+  <span> &nbsp;Description</span>
+</button ><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('syll')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-clipboard-list"></i> 
+  <span> &nbsp;Syllabus</span>
+</button ><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('topics')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-list-ol"></i> 
+  <span> &nbsp;Topics</span>
+</button ><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('link')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-link"></i>
+  <span> &nbsp;Reference Links</span>
+</button ><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('inst')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-chalkboard-teacher"></i>
+  <span> &nbsp;Teachers</span>
+</button><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('ann')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-bullhorn"></i>
+  <span> &nbsp;Announcements</span>
+</button><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('ass')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-file-download"></i>
+  <span> &nbsp;Assignments</span>
+</button><br>
+<a href="{% url 'quesr' cid %}"><button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-edit"></i>
+  <span> &nbsp;Questionnaire</span>
+</button></a><br>
+</div>
+
+<script>
+function hidefunc(e) {
+  document.getElementById('desc').style.display = "none";
+  document.getElementById('syll').style.display = "none";
+  document.getElementById('topics').style.display = "none";
+  document.getElementById('link').style.display = "none";
+  document.getElementById('inst').style.display = "none";
+  document.getElementById('ann').style.display = "none";
+  document.getElementById('ass').style.display = "none";
+  document.getElementById(e).style.display = "block";
+}
+</script>
+{% endblock %}

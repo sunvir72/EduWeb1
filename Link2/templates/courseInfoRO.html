@@ -1,0 +1,144 @@
+{% extends 'basepage.html' %}
+  {% block content %}
+<div style="font-family:verdana;padding-top:24px;background-color:white"><h2><center>{{course.item}}</center></h2><hr></div><br>
+<div class="container">
+
+<div style="border-radius: 6px;box-shadow: 0 0 10px #D8D8D8;padding: 25px;background-color:white">
+
+<div id="desc">
+<center>
+	<h3 style="display:inline-block;color:green;border: 1px solid green;padding: 7px;width: 200px;border-radius: 5px;"><center>Credits: {{course.cred}}</center></h3></center>
+	<br>
+	<h5><strong>Course Description</strong>:<br><br> {{course.desc|linebreaks}}</h5><br>
+</div>
+
+<div id="syll" style="display:none">
+<h5><strong>Syllabus</strong>:<br><br> {{course.syllabus|linebreaks}}</h5><br>
+</div>
+
+<div id="topics" style="display:none">
+{% if topics %}
+	<h4>Course Topics:</h4>
+  <table class="table table-transparent">
+  {% for it in topics %}
+  <tr id="topicele" >
+  <td>{{it.name}}</td>
+  </tr>
+  {% endfor %}
+  </table>
+{% endif %}
+</div>
+
+<div id="link" style="display:none">	
+	{% if l %}
+	<h4>Reference Links:</h4>
+  <table class="table table-transparent">
+  {% for it in l %}
+  <tr>
+  <td><a onclick="resClick('link')" href="{{it}}" target="_blank">{{it}}</a></td>
+  </tr>
+  {% endfor %}
+  </table>
+  {% endif %}
+</div>
+
+<div id="inst" style="display:none">
+	{% if i %}
+	<h4>Course Instructors:</h4>
+  <table class="table table-transparent">
+  {% for it in i %}
+  <tr>
+  <td>{{it}}</td>
+  </tr>
+  {% endfor %}
+  </table>
+  {% endif %}
+</div>
+
+<div id="ann" style="display:none">
+	{% if ann %}
+	<h4>Announcements:</h4>
+  <table class="table table-transparent">
+  {% for it in ann %}
+  <tr>
+  <td><b>{{forloop.counter}})</b> {{it|linebreaksbr}}</td>
+  </tr>
+  {% endfor %}
+  </table>
+	{% endif %}
+</div>
+
+<div id="ass" style="display:none">
+{% if ass %}
+<h4>Assignments:</h4>
+  <table class="table table-transparent">
+  {% for i in ass %}
+  <tr>
+  <td><center>{{i.name}}</center></td>
+  <td><center><a onclick="resClick('assignment')" href="{{i.assign.url}}" target="_blank">Download</a></center></td>
+  </tr>
+  {% endfor %}
+  </table>
+{% endif %}
+</div>
+
+
+</div>
+</div>
+<div class="h" style="position:fixed;top:auto; top:220px;left:0px;">
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('desc')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-chevron-right"></i>
+  <span> &nbsp;Description</span>
+</button ><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('syll')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-clipboard-list"></i> 
+  <span> &nbsp;Syllabus</span>
+</button ><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('topics')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-list-ol"></i> 
+  <span> &nbsp;Topics</span>
+</button ><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('link')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-link"></i>
+  <span> &nbsp;Reference Links</span>
+</button ><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('inst')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-chalkboard-teacher"></i>
+  <span> &nbsp;Teachers</span>
+</button><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('ann')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-bullhorn"></i>
+  <span> &nbsp;Announcements</span>
+</button><br>
+<button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" onclick="hidefunc('ass')" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-file-download"></i>
+  <span> &nbsp;Assignments</span>
+</button><br>
+<a href="{% url 'quesRO' cid %}"><button style="padding:10px;width:205px;text-align:left;" class="btn btn-light" >
+  <i style="color:#333D4B;width:50px;font-size:24px;padding-left: 8px;" class="fas fa-edit"></i>
+  <span> &nbsp;Questionnaire</span>
+</button></a><br>
+</div>
+
+<script>
+function hidefunc(e) {
+  document.getElementById('desc').style.display = "none";
+  document.getElementById('syll').style.display = "none";
+  document.getElementById('topics').style.display = "none";
+  document.getElementById('link').style.display = "none";
+  document.getElementById('inst').style.display = "none";
+  document.getElementById('ann').style.display = "none";
+  document.getElementById('ass').style.display = "none";
+  document.getElementById(e).style.display = "block";
+}
+function resClick(rtype) {
+$.ajax({
+url:'/courses/Raccess/'+{{cid}}+'/'+rtype ,
+type:'get', 
+success: function(){
+//alert('success!')
+}
+})
+}
+</script>
+{% endblock %}
