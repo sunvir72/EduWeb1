@@ -1,0 +1,51 @@
+{% extends 'basepage.html' %}
+{% block content %}
+{% load static %}
+{% if messages %}
+  {% for message in messages %}
+  <div class="alert alert-success" role="alert">
+    <center>{{ message }}</center>
+  </div>
+  {% endfor %}
+{% endif %}
+
+<center style="background-color:white;width:100%"><br><img style="background-color:white;display:inline-block" src="{% static "img/1.png" %}" width="550" height="430" align="middle"><br><div><h3 style="background-color:white;">Welcome to EduWeb</h3><p style="color:grey;display:inline-block">This Website is an educational online portal for Students and Teachers</p></center></div>
+  <div class="container">
+  <br>
+ <center> Some Key features of the website are:</center>
+  <br>
+  <table style="box-shadow: 0 0 10px #D8D8D8" class="table table-borderless">
+  <tr bgcolor="white">
+  <td style="width:150px"><img style="background-color:white;display:inline-block" src="{% static "img/5.png" %}" width="200" height="180" align="middle"></td>
+  <td style="vertical-align:middle"><h3>Courses</h3><p style="color:grey">- Teachers can easily create new courses<br>- They can enroll students in them, upon which an automated course invite is sent to each student<br>-Students on the other hand can register for the courses that they are enrolled for</p></td>
+  </tr>
+  </table>
+  
+  <table style="box-shadow: 0 0 10px #D8D8D8"  class="table table-borderless">
+  <tr bgcolor="white">
+  <td style="width:150px"><img style="background-color:white;display:inline-block" src="{% static "img/7.png" %}" width="200" height="140" align="middle"></td>
+  <td style="vertical-align:middle"><h3>Content</h3><p style="color:grey">- Teachers can upload course contents which the students can access at any time. Some of these are: <br>> Announcements<br>> Reference links<br>> Assignments<br>> Practice questionnaires and Tests</p></td>
+  </tr>
+  </table>
+  
+  <table style="box-shadow: 0 0 10px #D8D8D8" class="table table-borderless">
+  <tr bgcolor="white">
+  <td style="width:150px"><img style="background-color:white;display:inline-block" src="{% static "img/6.png" %}" width="200" height="180" align="middle"></td>
+  <td style="vertical-align:middle"><h3>Questionnaires</h3><p style="color:grey">- Teachers can easily create questionnaires<br>- Each question can have positive and negative marks and upto six options<br>- Time limit can also be set for them <br>- Questions can either be added one by one or bulk uploaded through a csv file<br>- These can be monitored and Email reminders can be sent to students who have not yet attempted them <br>-  When a student attempts a test, the screen goes into fullscreen mode<br>-  The test would be submitted automatically if the student tries to exit fullscreen</p></td>
+  </tr>
+  </table>
+  
+  <table style="box-shadow: 0 0 10px #D8D8D8" class="table table-borderless">
+  <tr bgcolor="white">
+  <td style="width:150px"><img style="background-color:white;display:inline-block" src="{% static "img/2.jpg" %}" width="200" height="180" align="middle"></td>
+  <td style="vertical-align:middle"><h3>Machine learning</h3><p style="color:grey">- Every activity of student is monitored and stored in the backend to create datasets<br>- Teachers can work on these datasets and appy machine learning models <br> - They can even upload their own dataset and work on it</p></td>
+  </tr>
+  </table>
+  
+
+  <br>
+  </div>
+
+{% endblock %}
+
+
